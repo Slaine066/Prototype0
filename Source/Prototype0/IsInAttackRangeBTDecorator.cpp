@@ -3,6 +3,8 @@
 
 #include "IsInAttackRangeBTDecorator.h"
 
+#include <string>
+
 #include "AIController.h"
 #include "HeroBase.h"
 #include "MobAIController.h"
@@ -17,9 +19,10 @@ UIsInAttackRangeBTDecorator::UIsInAttackRangeBTDecorator()
 bool UIsInAttackRangeBTDecorator::CalculateRawConditionValue(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory) const
 {
 	const AMobAIController* MobAIController = Cast<AMobAIController>(OwnerComp.GetAIOwner());
-	const AMobBase* Mob = Cast<AMobBase>(MobAIController->GetCharacter());
+	const AMobBase* Mob = Cast<AMobBase>(MobAIController->GetPawn());
 	const AHeroBase* Hero = Cast<AHeroBase>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("Player"));
-	
+
+	UE_LOG(LogTemp, Warning, TEXT("%f"), Mob->GetDistanceTo(Hero));
 	const bool bResult = (Mob->GetDistanceTo(Hero) <= 200);
 	return bResult;
 }

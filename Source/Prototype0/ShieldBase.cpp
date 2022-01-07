@@ -65,7 +65,7 @@ void AShieldBase::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor*
 			AHeroBase* Hero = Cast<AHeroBase>(OtherActor);
 			if (Hero)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Hero Overlaps with Shield Ends"));
+				UE_LOG(LogTemp, Warning, TEXT("Hero Overlaps with Shield End"));
 				Hero->SetOverlappingItem(nullptr);
 			}
 		}

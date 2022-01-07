@@ -6,13 +6,17 @@
 #include "MobAIController.h"
 #include "WeaponBase.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AMobBase::AMobBase()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	
 }
 
 // Called when the game starts or when spawned
@@ -20,6 +24,8 @@ void AMobBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("PawnMob"));
+	
 	if (WeaponClass)
 	{
 		// Setup Weapon
@@ -29,6 +35,7 @@ void AMobBase::BeginPlay()
 		if (WeaponSocket)
 		{
 			WeaponSocket->AttachActor(GetWeaponEquipped(), GetMesh());
+			GetWeaponEquipped()->GetMeshComponent()->SetCollisionProfileName(TEXT("WeaponMob"));
 			GetWeaponEquipped()->bShouldAnimate = false;
 			GetWeaponEquipped()->SetWeaponState(EWeaponState::Ews_Equipped);
 		}

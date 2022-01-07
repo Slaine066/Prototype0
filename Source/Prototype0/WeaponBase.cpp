@@ -57,7 +57,7 @@ void AWeaponBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActo
 	// If so, Do Damage to the Overlapped Character
 	if (GetWeaponState() == EWeaponState::Ews_Equipped)
 	{
-		if (OtherActor && OtherActor != GetWeaponOwner() && GetWeaponOwner()->bCanDamage)
+		if (OtherActor && GetWeaponOwner()->bCanDamage)
 		{
 			ACharacterBase* Character = Cast<ACharacterBase>(OtherActor);
 			if (Character)
@@ -83,7 +83,7 @@ void AWeaponBase::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor*
 			AHeroBase* Hero = Cast<AHeroBase>(OtherActor);
 			if (Hero)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Hero Overlaps with Weapon Begin"));
+				UE_LOG(LogTemp, Warning, TEXT("Hero Overlaps with Weapon End"));
 				Hero->SetOverlappingItem(nullptr);
 			}
 		}
@@ -108,6 +108,7 @@ void AWeaponBase::OnInteract(AHeroBase* Hero)
 			}
 		
 			// Equip Weapon
+			GetMeshComponent()->SetCollisionProfileName(TEXT("WeaponHero"));
 			Hero->SetWeaponEquipped(this, Hero);
 			Hero->SetOverlappingItem(nullptr);
 		

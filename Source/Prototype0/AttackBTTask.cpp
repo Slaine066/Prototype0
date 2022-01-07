@@ -14,7 +14,7 @@ UAttackBTTask::UAttackBTTask()
 
 EBTNodeResult::Type UAttackBTTask::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	AMobBase* Mob = Cast<AMobBase>(OwnerComp.GetAIOwner()->GetCharacter());
+	AMobBase* Mob = Cast<AMobBase>(OwnerComp.GetAIOwner()->GetPawn());
 	
 	if (Mob)
 	{
@@ -29,7 +29,7 @@ void UAttackBTTask::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemor
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSecondes);
 	
-	AMobBase* Mob = Cast<AMobBase>(OwnerComp.GetAIOwner()->GetCharacter());
+	AMobBase* Mob = Cast<AMobBase>(OwnerComp.GetAIOwner()->GetPawn());
 	
 	if (Mob && !Mob->bIsAttacking)
 	{

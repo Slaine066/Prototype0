@@ -25,9 +25,7 @@ void AItemBase::BeginPlay()
 	Super::BeginPlay();
 
 	// Setup Collisions
-	MeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Ignore);
-	MeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
-	MeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	MeshComponent->SetCollisionProfileName(TEXT("Item"));
 	MeshComponent->SetSimulatePhysics(false);
 
 	bShouldAnimate = true;

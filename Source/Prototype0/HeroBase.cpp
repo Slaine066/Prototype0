@@ -7,6 +7,7 @@
 #include "ShieldBase.h"
 #include "WeaponBase.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -42,7 +43,7 @@ AHeroBase::AHeroBase()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 	GetCharacterMovement()->MaxWalkSpeed = 650.f;
-
+	
 	StimuliComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimuli Component"));
 	StimuliComponent->RegisterForSense(TSubclassOf<UAISense_Sight>());
 	StimuliComponent->RegisterWithPerceptionSystem();
@@ -52,6 +53,8 @@ void AHeroBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("PawnHero"));
+	
 	// Setup Weapon
 	if (WeaponClass)
 	{
@@ -61,6 +64,7 @@ void AHeroBase::BeginPlay()
 		if (WeaponSocket)
 		{
 			WeaponSocket->AttachActor(GetWeaponEquipped(), GetMesh());
+			GetWeaponEquipped()->GetMeshComponent()->SetCollisionProfileName(TEXT("WeaponHero"));
 			GetWeaponEquipped()->bShouldAnimate = false;
 			GetWeaponEquipped()->SetWeaponState(EWeaponState::Ews_Equipped);
 		}

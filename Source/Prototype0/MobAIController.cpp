@@ -73,12 +73,7 @@ void AMobAIController::OnTargetPerceptionUpdate(AActor* Actor, const FAIStimulus
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Sensed. Mob Should Chase."));
 				GetBlackboardComponent()->SetValueAsObject("Player", Hero);
-			} else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Not Sensed. Mob Should Retreat."));
-				GetBlackboardComponent()->SetValueAsObject("Player", nullptr);
 			}
-		
 		}
 	}
 }

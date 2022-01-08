@@ -20,8 +20,7 @@ EBTNodeResult::Type UAttackBTTask::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 	{
 		Mob->Attack();
 	}
-
-	FinishLatentTask(OwnerComp, EBTNodeResult::InProgress);
+	
 	return EBTNodeResult::InProgress;
 }
 

@@ -28,8 +28,6 @@ EBTNodeResult::Type UFindRandomLocationBTTask::ExecuteTask(UBehaviorTreeComponen
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector("DestinationLocation", Destination.Location);
 	}
-
-	// Finish Task
-	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	
 	return EBTNodeResult::Succeeded;
 }

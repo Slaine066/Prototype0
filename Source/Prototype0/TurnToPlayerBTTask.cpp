@@ -26,7 +26,6 @@ EBTNodeResult::Type UTurnToPlayerBTTask::ExecuteTask(UBehaviorTreeComponent& Own
 
 	const FRotator TargetRotation = FRotationMatrix::MakeFromX(LookVector).Rotator();
 	Mob->SetActorRotation(FMath::RInterpTo(Mob->GetActorRotation(), TargetRotation, GetWorld()->GetDeltaSeconds(), 2.0f));
-
-	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	
 	return EBTNodeResult::Succeeded;
 }

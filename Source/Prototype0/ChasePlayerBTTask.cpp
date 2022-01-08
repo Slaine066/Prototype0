@@ -28,6 +28,5 @@ EBTNodeResult::Type UChasePlayerBTTask::ExecuteTask(UBehaviorTreeComponent& Owne
 	
 	MobAIController->MoveTo(MoveRequest, &NavigationPath);
 	
-	FinishLatentTask(OwnerComp, EBTNodeResult::InProgress);
 	return EBTNodeResult::InProgress;
 }

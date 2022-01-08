@@ -4,7 +4,10 @@
 #include "AttackBTTask.h"
 
 #include "AIController.h"
+#include "HeroBase.h"
+#include "MobAIController.h"
 #include "MobBase.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 UAttackBTTask::UAttackBTTask()
 {
@@ -14,7 +17,17 @@ UAttackBTTask::UAttackBTTask()
 
 EBTNodeResult::Type UAttackBTTask::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	AMobBase* Mob = Cast<AMobBase>(OwnerComp.GetAIOwner()->GetPawn());
+	AHeroBase* Hero = Cast<AHeroBase>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("Player"));
+	if (!Hero) { return EBTNodeResult::Failed; }
+
+	if (Hero->bIsDead)
+	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject("Player", nullptr);
+		return EBTNodeResult::Succeeded;
+	}
+	
+	const AMobAIController* MobAIController = Cast<AMobAIController>(OwnerComp.GetAIOwner());
+	AMobBase* Mob = Cast<AMobBase>(MobAIController->GetCharacter());
 	
 	if (Mob)
 	{

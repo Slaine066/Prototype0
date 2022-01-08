@@ -15,8 +15,6 @@ AMobBase::AMobBase()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	
 }
 
 // Called when the game starts or when spawned
@@ -61,21 +59,18 @@ void AMobBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AMobBase::Attack()
 {
-	if (!bIsDead)
+	bIsAttacking = true;
+
+	// Play Attack Montage
+	const int32 AttackMontageToPlay = FMath::RandRange(1, 2);
+	if (AttackMontageToPlay == 1 && AttackMontage1)
 	{
-		bIsAttacking = true;
-	
-		const int32 AttackMontageToPlay = FMath::RandRange(1, 2);
-	
-		if (AttackMontageToPlay == 1 && AttackMontage1)
-		{
-			PlayAnimMontage(AttackMontage1);
-		}
-	
-		if (AttackMontageToPlay == 2 && AttackMontage2)
-		{
-			PlayAnimMontage(AttackMontage2);
-		}
+		PlayAnimMontage(AttackMontage1);
+	}
+
+	if (AttackMontageToPlay == 2 && AttackMontage2)
+	{
+		PlayAnimMontage(AttackMontage2);
 	}
 }
 
@@ -104,15 +99,19 @@ void AMobBase::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageTy
 void AMobBase::Die()
 {
 	bIsDead = true;
+
+	// Remove Collisions
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"));
 	
+	// Stop Behavior Tree
 	AMobAIController* MobAIController = Cast<AMobAIController>(GetController());
 	if (MobAIController)
 	{
 		MobAIController->GetBehaviorTreeComponent()->StopTree(EBTStopMode::Type::Safe);
 	}
 
+	// Play Death Montage
 	const int32 DeathMontageToPlay = FMath::RandRange(1, 2);
-	
 	if (DeathMontageToPlay == 1 && DeathMontage1)
 	{
 		PlayAnimMontage(DeathMontage1);

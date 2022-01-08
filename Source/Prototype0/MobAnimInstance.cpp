@@ -4,6 +4,7 @@
 #include "MobAnimInstance.h"
 
 #include "MobBase.h"
+#include "Components/CapsuleComponent.h"
 
 void UMobAnimInstance::NativeInitializeAnimation()
 {

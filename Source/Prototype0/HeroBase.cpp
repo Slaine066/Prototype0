@@ -54,7 +54,7 @@ void AHeroBase::BeginPlay()
 	Super::BeginPlay();
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("PawnHero"));
-	
+
 	// Setup Weapon
 	if (WeaponClass)
 	{
@@ -240,6 +240,10 @@ void AHeroBase::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageT
 void AHeroBase::Die()
 {
 	bIsDead = true;
+
+	// Remove Collisions
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"));
+	
 	PlayAnimMontage(DeathMontage1);
 }
 

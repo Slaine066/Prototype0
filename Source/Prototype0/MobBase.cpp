@@ -3,6 +3,8 @@
 
 #include "MobBase.h"
 
+#include "DamageIndicator.h"
+#include "DamageIndicatorComponent.h"
 #include "MobAIController.h"
 #include "WeaponBase.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
@@ -87,6 +89,11 @@ void AMobBase::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageTy
     	UE_LOG(LogTemp, Warning, TEXT("Mob Takes Damage"));
     	// Decrease Health
     	SetCurrentHealth(FMath::Clamp(GetCurrentHealth() - Damage, 0.0f, GetMaxHealth()));
+
+    	// Spawn Damage Indicators
+    	const FString DamageString = FString::SanitizeFloat(Damage, 0);
+    	FText DamageText = FText::FromString(DamageString);
+    	GetDamageIndicatorComponent()->AppendDamageIndicator(DamageText, GetActorLocation());
 
     	// Check if Character is dead
     	if (GetCurrentHealth() <= 0)

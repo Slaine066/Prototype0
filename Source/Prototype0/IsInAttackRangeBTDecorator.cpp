@@ -21,8 +21,7 @@ bool UIsInAttackRangeBTDecorator::CalculateRawConditionValue(UBehaviorTreeCompon
 	const AMobAIController* MobAIController = Cast<AMobAIController>(OwnerComp.GetAIOwner());
 	const AMobBase* Mob = Cast<AMobBase>(MobAIController->GetPawn());
 	const AHeroBase* Hero = Cast<AHeroBase>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("Player"));
-
-	UE_LOG(LogTemp, Warning, TEXT("%f"), Mob->GetDistanceTo(Hero));
+	
 	const bool bResult = (Mob->GetDistanceTo(Hero) <= 200);
 	return bResult;
 }

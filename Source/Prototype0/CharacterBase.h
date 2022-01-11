@@ -8,6 +8,9 @@
 #include "CharacterBase.generated.h"
 
 class AWeaponBase;
+class ADamageIndicator;
+class UDamageIndicatorComponent;
+
 UCLASS()
 class PROTOTYPE0_API ACharacterBase : public ACharacter
 {
@@ -16,6 +19,9 @@ class PROTOTYPE0_API ACharacterBase : public ACharacter
 	/*
 	** Private Properties
 	*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	UDamageIndicatorComponent* DamageIndicatorComponent;
+	
 	// Weapon held by the player
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item", meta = (AllowPrivateAccess = "true"))
 	class AWeaponBase* WeaponEquipped;
@@ -51,7 +57,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
 	bool bIsDead;
-
+	
 	UFUNCTION()
 	void OnMontageNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
 	
@@ -73,4 +79,7 @@ public:
 	FORCEINLINE virtual float GetMaxHealth() { return MaxHealth; }
 	FORCEINLINE virtual void SetCurrentHealth(const float Health) { CurrentHealth = Health; }
 	FORCEINLINE virtual float GetCurrentHealth() { return CurrentHealth; }
+	
+	FORCEINLINE void SetDamageIndicatorComponent(UDamageIndicatorComponent* Component) { DamageIndicatorComponent = Component; }
+	FORCEINLINE UDamageIndicatorComponent* GetDamageIndicatorComponent() const { return DamageIndicatorComponent; }
 };

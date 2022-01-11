@@ -3,6 +3,7 @@
 
 #include "HeroBase.h"
 
+#include "DamageIndicatorComponent.h"
 #include "ItemBase.h"
 #include "ShieldBase.h"
 #include "WeaponBase.h"
@@ -227,6 +228,11 @@ void AHeroBase::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageT
 		UE_LOG(LogTemp, Warning, TEXT("Hero Takes Damage"));
 		// Decrease Health
 		SetCurrentHealth(FMath::Clamp(GetCurrentHealth() - Damage, 0.0f, GetMaxHealth()));
+
+		// Spawn Damage Indicators
+		const FString DamageString = FString::SanitizeFloat(Damage, 0);
+		FText DamageText = FText::FromString(DamageString);
+		GetDamageIndicatorComponent()->AppendDamageIndicator(DamageText, GetActorLocation());
 
 		// Check if Character is dead
 		if (GetCurrentHealth() <= 0)

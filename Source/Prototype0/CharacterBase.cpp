@@ -3,7 +3,7 @@
 
 #include "CharacterBase.h"
 
-#include "ItemBase.h"
+#include "DamageIndicatorComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -11,6 +11,9 @@ ACharacterBase::ACharacterBase()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Damage Indicator Component
+	SetDamageIndicatorComponent(CreateDefaultSubobject<UDamageIndicatorComponent>(TEXT("Damage Indicator")));
 }
 
 // Called when the game starts or when spawned

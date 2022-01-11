@@ -10,10 +10,7 @@ UCLASS()
 class PROTOTYPE0_API AHeroBase : public ACharacterBase
 {
 	GENERATED_BODY()
-
-	/*
-	** Private Properties
-	*/
+	
 	// Spring Arm
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* SpringArmComponent;
@@ -29,18 +26,6 @@ class PROTOTYPE0_API AHeroBase : public ACharacterBase
 	// Item Overlapping with the player
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item", meta = (AllowPrivateAccess = "true"))
 	class AItemBase* OverlappingItem;
-
-	// Weapon Class
-	UPROPERTY(EditAnywhere, Category = "Item")
-	TSubclassOf<AWeaponBase> WeaponClass;
-
-	// Shield Class
-	UPROPERTY(EditAnywhere, Category = "Item")
-	TSubclassOf<AShieldBase> ShieldClass;
-
-	// Check if the player is already attacking
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-	bool bIsAttacking;
 
 	// Contains Integer related to the combo attack to perform
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
@@ -65,22 +50,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	/*
-	** Public Properties
-	*/
-	// Attacks Montages
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
-	class UAnimMontage* AttackMontage1;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
-	class UAnimMontage* AttackMontage2;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
-	class UAnimMontage* AttackMontage3;
-
-	// Deaths Montages
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
-	UAnimMontage* DeathMontage1;
-
-	/*
-	** Public Methods
+	** Input Bindings
 	*/
 	// Move Forward (W) - Move Backward (S)
 	void MoveStraight(float AxisValue);
@@ -93,12 +63,11 @@ public:
 	// Interact with Items in the world (E)
 	void Interact();
 	// Attack (Mouse Left Click)
-	void Attack();
+	virtual void Attack() override;
 	// Attack - Combo (Mouse Left Click)
 	void AttackCombo();
-
-	UFUNCTION()
-	void Die();
+	
+	virtual void Die() override;
 	
 	virtual void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser) override;
 	
@@ -114,8 +83,6 @@ public:
 	FORCEINLINE AItemBase* GetOverlappingItem() const { return OverlappingItem; }
 
 	// Combat
-	FORCEINLINE void SetIsAttacking(const bool IsAttacking) { bIsAttacking = IsAttacking; }
-	FORCEINLINE bool GetIsAttacking() const { return bIsAttacking; }
 	FORCEINLINE void SetComboCounter(const int Counter) { ComboCounter = Counter; }
 	FORCEINLINE int GetComboCounter() const { return ComboCounter; }
 	FORCEINLINE void SetIsComboActive(const bool IsComboActive) { bIsComboActive = IsComboActive; }

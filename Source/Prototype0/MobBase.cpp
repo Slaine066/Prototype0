@@ -6,6 +6,7 @@
 #include "DamageIndicator.h"
 #include "DamageIndicatorComponent.h"
 #include "MobAIController.h"
+#include "ShieldBase.h"
 #include "WeaponBase.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -24,12 +25,17 @@ void AMobBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Bind OnMontageEnded Delegate
+	GetMesh()->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &AMobBase::OnMontageEnded);
+
+	// Setup Collision Profile
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("PawnMob"));
-	
-	if (WeaponClass)
+
+	// Setup Weapon
+	if (GetWeaponClass())
 	{
 		// Setup Weapon
-		SetWeaponEquipped(GetWorld()->SpawnActor<AWeaponBase>(WeaponClass), this);
+		SetWeaponEquipped(GetWorld()->SpawnActor<AWeaponBase>(GetWeaponClass()), this);
 	
 		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("Hand_RSocket");
 		if (WeaponSocket)
@@ -40,11 +46,20 @@ void AMobBase::BeginPlay()
 			GetWeaponEquipped()->SetWeaponState(EWeaponState::Ews_Equipped);
 		}
 	}
-	
-	bIsAttacking = false;
 
-	// Bind OnMontageEnded Delegate
-	GetMesh()->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &AMobBase::OnMontageEnded);
+	// Setup Shield
+	if (GetShieldClass())
+	{
+		SetShieldEquipped(GetWorld()->SpawnActor<AShieldBase>(GetShieldClass()));
+	
+		const USkeletalMeshSocket* ShieldSocket = GetMesh()->GetSocketByName("Hand_LSocket");
+		if (ShieldSocket)
+		{
+			ShieldSocket->AttachActor(GetShieldEquipped(), GetMesh());
+			GetShieldEquipped()->bShouldAnimate = false;
+			GetShieldEquipped()->SetShieldState(EShieldState::Ess_Equipped);
+		}
+	}
 }
 
 // Called every frame
@@ -61,18 +76,17 @@ void AMobBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AMobBase::Attack()
 {
-	bIsAttacking = true;
-
-	// Play Attack Montage
-	const int32 AttackMontageToPlay = FMath::RandRange(1, 2);
-	if (AttackMontageToPlay == 1 && AttackMontage1)
+	if (GetWeaponEquipped())
 	{
-		PlayAnimMontage(AttackMontage1);
-	}
+		bIsAttacking = true;
+	
+		// Play Attack Montage
+		const int32 AttackMontageToPlay = FMath::RandRange(1, AttackMontages.Num());
 
-	if (AttackMontageToPlay == 2 && AttackMontage2)
-	{
-		PlayAnimMontage(AttackMontage2);
+		if (AttackMontages[AttackMontageToPlay - 1])
+		{
+			PlayAnimMontage(AttackMontages[AttackMontageToPlay - 1]);
+		}
 	}
 }
 
@@ -84,48 +98,20 @@ void AMobBase::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 void AMobBase::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* Damage1, AController* InstigatedBy,
 	AActor* DamageCauser)
 {
-    if (Damage != 0 && GetCurrentHealth() > 0)
-    {
-    	UE_LOG(LogTemp, Warning, TEXT("Mob Takes Damage"));
-    	// Decrease Health
-    	SetCurrentHealth(FMath::Clamp(GetCurrentHealth() - Damage, 0.0f, GetMaxHealth()));
-
-    	// Spawn Damage Indicators
-    	const FString DamageString = FString::SanitizeFloat(Damage, 0);
-    	FText DamageText = FText::FromString(DamageString);
-    	GetDamageIndicatorComponent()->AppendDamageIndicator(DamageText, GetActorLocation());
-
-    	// Check if Character is dead
-    	if (GetCurrentHealth() <= 0)
-    	{
-    		Die();
-    	}
-    }
+	UE_LOG(LogTemp, Warning, TEXT("Mob Takes Damage"));
+	
+    Super::OnDamageTaken(DamagedActor, Damage, Damage1, InstigatedBy, DamageCauser);
 }
 
 void AMobBase::Die()
 {
-	bIsDead = true;
-
-	// Remove Collisions
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"));
+	UE_LOG(LogTemp, Warning, TEXT("Mob Dies"));
+	Super::Die();
 	
 	// Stop Behavior Tree
 	AMobAIController* MobAIController = Cast<AMobAIController>(GetController());
 	if (MobAIController)
 	{
 		MobAIController->GetBehaviorTreeComponent()->StopTree(EBTStopMode::Type::Safe);
-	}
-
-	// Play Death Montage
-	const int32 DeathMontageToPlay = FMath::RandRange(1, 2);
-	if (DeathMontageToPlay == 1 && DeathMontage1)
-	{
-		PlayAnimMontage(DeathMontage1);
-	}
-	
-	if (DeathMontageToPlay == 2 && DeathMontage2)
-	{
-		PlayAnimMontage(DeathMontage2);
 	}
 }

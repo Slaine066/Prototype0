@@ -54,12 +54,17 @@ void AHeroBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Initialize Combat Properties
+	SetComboCounter(0);
+	SetIsComboActive(false);
+
+	// Setup Collision Profile
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("PawnHero"));
 
 	// Setup Weapon
-	if (WeaponClass)
+	if (GetWeaponClass())
 	{
-		SetWeaponEquipped(GetWorld()->SpawnActor<AWeaponBase>(WeaponClass), this);
+		SetWeaponEquipped(GetWorld()->SpawnActor<AWeaponBase>(GetWeaponClass()), this);
 	
 		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("Hand_RSocket");
 		if (WeaponSocket)
@@ -72,9 +77,9 @@ void AHeroBase::BeginPlay()
 	}
 	
 	// Setup Shield
-	if (ShieldClass)
+	if (GetShieldClass())
 	{
-		SetShieldEquipped(GetWorld()->SpawnActor<AShieldBase>(ShieldClass));
+		SetShieldEquipped(GetWorld()->SpawnActor<AShieldBase>(GetShieldClass()));
 	
 		const USkeletalMeshSocket* ShieldSocket = GetMesh()->GetSocketByName("Hand_LSocket");
 		if (ShieldSocket)
@@ -84,11 +89,6 @@ void AHeroBase::BeginPlay()
 			GetShieldEquipped()->SetShieldState(EShieldState::Ess_Equipped);
 		}
 	}
-	
-	// Initialize Combat Properties
-	SetIsAttacking(false);
-	SetComboCounter(0);
-	SetIsComboActive(false);
 }
 
 // Called every frame
@@ -118,7 +118,7 @@ void AHeroBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 // Move Forward (W) - Move Backward (S)
 void AHeroBase::MoveStraight(const float AxisValue)
 {
-	if (GetController() && AxisValue != 0.0f && !GetIsAttacking())
+	if (GetController() && AxisValue != 0.0f && !bIsAttacking)
 	{
 		// Get Controller Yaw Rotation
 		const FRotator Rotation = GetController()->GetControlRotation();
@@ -134,7 +134,7 @@ void AHeroBase::MoveStraight(const float AxisValue)
 // Move Left (A) - Move Right (D)
 void AHeroBase::MoveSide(const float AxisValue)
 {
-	if (GetController() && AxisValue != 0.0f && !GetIsAttacking())
+	if (GetController() && AxisValue != 0.0f && !bIsAttacking)
 	{
 		// Get Controller Yaw Rotation
 		const FRotator Rotation = GetController()->GetControlRotation();
@@ -174,7 +174,7 @@ void AHeroBase::Attack()
 {
 	if (GetWeaponEquipped())
 	{
-		if (GetIsAttacking())
+		if (bIsAttacking)
 		{
 			if (GetComboCounter() != 0)
 			{
@@ -183,9 +183,9 @@ void AHeroBase::Attack()
 		}
 		else
 		{
-			SetIsAttacking(true);
+			bIsAttacking = true;
 			SetComboCounter(1);
-			PlayAnimMontage(AttackMontage1);
+			PlayAnimMontage(AttackMontages[0]);
 		}
 	}
 }
@@ -202,11 +202,11 @@ void AHeroBase::AttackCombo()
 			{
 			case 1:
 				SetComboCounter(2);
-				PlayAnimMontage(AttackMontage2);
+				PlayAnimMontage(AttackMontages[1]);
 				break;
 			case 2:
 				SetComboCounter(0);
-				PlayAnimMontage(AttackMontage3);
+				PlayAnimMontage(AttackMontages[2]);
 				break;
 			default:
 				UE_LOG(LogTemp, Warning, TEXT("ACharacterBase::AttackCombo(): Default"));
@@ -214,42 +214,21 @@ void AHeroBase::AttackCombo()
 		}
 		else
 		{
-			SetIsAttacking(false);
+			bIsAttacking = false;
 			SetComboCounter(0);
 		}
 	}
 }
 
-void AHeroBase::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* Damage1, AController* InstigatedBy,
+void AHeroBase::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy,
                               AActor* DamageCauser)
 {
-	if (Damage != 0 && GetCurrentHealth() > 0)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Hero Takes Damage"));
-		// Decrease Health
-		SetCurrentHealth(FMath::Clamp(GetCurrentHealth() - Damage, 0.0f, GetMaxHealth()));
-
-		// Spawn Damage Indicators
-		const FString DamageString = FString::SanitizeFloat(Damage, 0);
-		FText DamageText = FText::FromString(DamageString);
-		GetDamageIndicatorComponent()->AppendDamageIndicator(DamageText, GetActorLocation());
-
-		// Check if Character is dead
-		if (GetCurrentHealth() <= 0)
-		{
-			Die();
-		}
-	}
+	UE_LOG(LogTemp, Warning, TEXT("Hero Takes Damage"));
+	Super::OnDamageTaken(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
 }
-
 
 void AHeroBase::Die()
 {
-	bIsDead = true;
-
-	// Remove Collisions
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"));
-	
-	PlayAnimMontage(DeathMontage1);
+	UE_LOG(LogTemp, Warning, TEXT("Hero Dies"));
+	Super::Die();
 }
-

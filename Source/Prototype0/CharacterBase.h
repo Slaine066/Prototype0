@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
 
+class AShieldBase;
 class AWeaponBase;
 class ADamageIndicator;
 class UDamageIndicatorComponent;
@@ -21,14 +22,22 @@ class PROTOTYPE0_API ACharacterBase : public ACharacter
 	*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	UDamageIndicatorComponent* DamageIndicatorComponent;
+
+	// Weapon Class
+	UPROPERTY(EditAnywhere, Category = "Item")
+	TSubclassOf<AWeaponBase> WeaponClass;
+
+	// Shield Class
+	UPROPERTY(EditAnywhere, Category = "Item")
+	TSubclassOf<AShieldBase> ShieldClass;
 	
 	// Weapon held by the player
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item", meta = (AllowPrivateAccess = "true"))
-	class AWeaponBase* WeaponEquipped;
+	AWeaponBase* WeaponEquipped;
 
 	// Shield held by the player
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item", meta = (AllowPrivateAccess = "true"))
-	class AShieldBase* ShieldEquipped;
+	AShieldBase* ShieldEquipped;
 
 	// Max Health Statistic
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Statistics", meta = (AllowPrivateAccess = "true"))
@@ -52,33 +61,57 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	/*
+	** Public Properties
+	*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	bool bIsAttacking;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
 	bool bCanDamage;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
 	bool bIsDead;
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
+	TArray<UAnimMontage*> AttackMontages;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
+	TArray<UAnimMontage*> DeathMontages;
+
+	/*
+	** Public Methods
+	*/
 	UFUNCTION()
 	void OnMontageNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
 	
 	UFUNCTION()
 	void OnMontageNotifyEnd(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
+
+	UFUNCTION()
+	virtual void Attack();
 	
 	UFUNCTION()
 	virtual void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+
+	UFUNCTION()
+	virtual void Die();
 	
 	/*
 	** Getters & Setters
 	*/
-	FORCEINLINE virtual void SetWeaponEquipped(AWeaponBase* Weapon, ACharacterBase* WepOwner) { WeaponEquipped = Weapon; Weapon->SetWeaponOwner(WepOwner); }
-	FORCEINLINE virtual AWeaponBase* GetWeaponEquipped() const { return WeaponEquipped; }
-	FORCEINLINE virtual void SetShieldEquipped(AShieldBase* Shield) { ShieldEquipped = Shield; }
-	FORCEINLINE virtual AShieldBase* GetShieldEquipped() const { return ShieldEquipped; }
+	FORCEINLINE TSubclassOf<AWeaponBase> GetWeaponClass() const { return WeaponClass; }
+	FORCEINLINE TSubclassOf<AShieldBase> GetShieldClass() const { return ShieldClass; }
+	
+	FORCEINLINE void SetWeaponEquipped(AWeaponBase* Weapon, ACharacterBase* WepOwner) { WeaponEquipped = Weapon; Weapon->SetWeaponOwner(WepOwner); }
+	FORCEINLINE AWeaponBase* GetWeaponEquipped() const { return WeaponEquipped; }
+	FORCEINLINE void SetShieldEquipped(AShieldBase* Shield) { ShieldEquipped = Shield; }
+	FORCEINLINE AShieldBase* GetShieldEquipped() const { return ShieldEquipped; }
 
-	FORCEINLINE virtual void SetMaxHealth(const float Health) { MaxHealth = Health; }
-	FORCEINLINE virtual float GetMaxHealth() { return MaxHealth; }
-	FORCEINLINE virtual void SetCurrentHealth(const float Health) { CurrentHealth = Health; }
-	FORCEINLINE virtual float GetCurrentHealth() { return CurrentHealth; }
+	FORCEINLINE void SetMaxHealth(const float Health) { MaxHealth = Health; }
+	FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
+	FORCEINLINE void SetCurrentHealth(const float Health) { CurrentHealth = Health; }
+	FORCEINLINE float GetCurrentHealth() const { return CurrentHealth; }
 	
 	FORCEINLINE void SetDamageIndicatorComponent(UDamageIndicatorComponent* Component) { DamageIndicatorComponent = Component; }
 	FORCEINLINE UDamageIndicatorComponent* GetDamageIndicatorComponent() const { return DamageIndicatorComponent; }

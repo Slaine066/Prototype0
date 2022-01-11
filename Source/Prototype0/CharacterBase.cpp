@@ -4,6 +4,7 @@
 #include "CharacterBase.h"
 
 #include "DamageIndicatorComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -23,6 +24,7 @@ void ACharacterBase::BeginPlay()
 	
 	MaxHealth = 100.f;
 	CurrentHealth = MaxHealth;
+	bIsAttacking = false;
 	bCanDamage = false;
 	bIsDead = false;
 
@@ -58,6 +60,41 @@ void ACharacterBase::OnMontageNotifyEnd(FName NotifyName, const FBranchingPointN
 	bCanDamage = false;
 }
 
+void ACharacterBase::Attack()
+{
+}
+
 void ACharacterBase::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
+	if (Damage != 0 && GetCurrentHealth() > 0)
+	{
+		// Decrease Health
+		SetCurrentHealth(FMath::Clamp(GetCurrentHealth() - Damage, 0.0f, GetMaxHealth()));
+
+		// Spawn Damage Indicators
+		const FString DamageString = FString::SanitizeFloat(Damage, 0);
+		FText DamageText = FText::FromString(DamageString);
+		GetDamageIndicatorComponent()->AppendDamageIndicator(DamageText, GetActorLocation());
+
+		// Check if Character is dead
+		if (GetCurrentHealth() <= 0)
+		{
+			Die();
+		}
+	}
+}
+
+void ACharacterBase::Die()
+{
+	bIsDead = true;
+
+	// Remove Collisions
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"));
+	
+	// Play Death Montage
+	const int32 DeathMontageToPlay = FMath::RandRange(1, DeathMontages.Num());
+	if (DeathMontages[DeathMontageToPlay - 1])
+	{
+		PlayAnimMontage(DeathMontages[DeathMontageToPlay - 1]);
+	}
 }

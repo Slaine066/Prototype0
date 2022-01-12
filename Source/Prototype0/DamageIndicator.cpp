@@ -40,10 +40,9 @@ void ADamageIndicator::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ADamageIndicator::InitializeDamageIndicator(const FText& Text, const EDamageIndicatorType Type)
+void ADamageIndicator::InitializeDamageIndicator(const FText& Text)
 {
 	DamageText = Text;
-	DamageIndicatorType = Type;
 }
 
 void ADamageIndicator::AnimFinished()

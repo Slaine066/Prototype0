@@ -3,10 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DamageIndicatorComponent.h"
 #include "GameFramework/Actor.h"
 #include "DamageIndicator.generated.h"
 
+UENUM(BlueprintType)
+enum class EDamageIndicatorType : uint8
+{
+	Edit_Hero		UMETA(DisplayName = "Hero"),
+	Edit_Mob		UMETA(DisplayName = "Mob"),
+	Edit_Default	UMETA(DisplayName = "Default")
+};
 
 UCLASS()
 class PROTOTYPE0_API ADamageIndicator : public AActor
@@ -16,7 +22,7 @@ class PROTOTYPE0_API ADamageIndicator : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FText DamageText;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EDamageIndicatorType DamageIndicatorType;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -37,7 +43,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-	void InitializeDamageIndicator(const FText& Text, EDamageIndicatorType Type);
+	void InitializeDamageIndicator(const FText& Text);
 
 	UFUNCTION()
 	void AnimFinished();

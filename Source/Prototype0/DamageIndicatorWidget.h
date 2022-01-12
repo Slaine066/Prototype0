@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DamageIndicatorComponent.h"
+#include "DamageIndicator.h"
 #include "Blueprint/UserWidget.h"
 #include "DamageIndicatorWidget.generated.h"
 

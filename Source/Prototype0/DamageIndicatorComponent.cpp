@@ -60,7 +60,7 @@ void UDamageIndicatorComponent::AppendDamageIndicator(FText& Text, FVector Locat
 		ADamageIndicator* NewDamageIndicator = GetWorld()->SpawnActorDeferred<ADamageIndicator>(DamageIndicatorClass, SpawnTransform, GetOwner());
 		if (NewDamageIndicator)
 		{
-			NewDamageIndicator->InitializeDamageIndicator(Text, DamageIndicatorType);
+			NewDamageIndicator->InitializeDamageIndicator(Text);
 			NewDamageIndicator->OnDestroyed.AddDynamic(this, &UDamageIndicatorComponent::OnActorDestroyed);
 			UGameplayStatics::FinishSpawningActor(NewDamageIndicator, SpawnTransform);
 

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DamageIndicatorComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "DamageIndicatorWidget.generated.h"
 
@@ -19,7 +20,7 @@ public:
 
 	virtual void NativeOnInitialized() override;
 
-	void InitializeDamageIndicator(FText Text) const;
+	void InitializeDamageIndicator(FText Text, EDamageIndicatorType Type) const;
 	
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* DamageText;

@@ -3,6 +3,7 @@
 
 #include "DamageIndicator.h"
 
+#include "DamageIndicatorWidget.h"
 #include "Components/WidgetComponent.h"
 
 // Sets default values
@@ -28,7 +29,7 @@ void ADamageIndicator::BeginPlay()
 	if (DamageIndicatorWidget)
 	{
 		DamageIndicatorWidget->OnAnimFinished.BindDynamic(this, &ADamageIndicator::AnimFinished);
-		DamageIndicatorWidget->InitializeDamageIndicator(DamageText);
+		DamageIndicatorWidget->InitializeDamageIndicator(DamageText, DamageIndicatorType);
 	}
 	
 }
@@ -39,9 +40,10 @@ void ADamageIndicator::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ADamageIndicator::InitializeDamageIndicator(const FText& Text)
+void ADamageIndicator::InitializeDamageIndicator(const FText& Text, const EDamageIndicatorType Type)
 {
 	DamageText = Text;
+	DamageIndicatorType = Type;
 }
 
 void ADamageIndicator::AnimFinished()

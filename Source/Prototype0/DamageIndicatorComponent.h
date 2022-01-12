@@ -9,6 +9,14 @@
 
 class ADamageIndicator;
 
+UENUM(BlueprintType)
+enum class EDamageIndicatorType : uint8
+{
+	Edit_Hero		UMETA(DisplayName = "Hero"),
+	Edit_Mob		UMETA(DisplayName = "Mob"),
+	Edit_Default	UMETA(DisplayName = "Default")
+};
+
 UCLASS()
 class PROTOTYPE0_API UDamageIndicatorComponent : public UActorComponent
 {
@@ -16,6 +24,9 @@ class PROTOTYPE0_API UDamageIndicatorComponent : public UActorComponent
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<ADamageIndicator> DamageIndicatorClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	EDamageIndicatorType DamageIndicatorType;
 
 	// Amount of Space between each DamageIndicator
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

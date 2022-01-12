@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DamageIndicatorWidget.h"
+#include "DamageIndicatorComponent.h"
 #include "GameFramework/Actor.h"
 #include "DamageIndicator.generated.h"
+
 
 UCLASS()
 class PROTOTYPE0_API ADamageIndicator : public AActor
@@ -14,6 +15,9 @@ class PROTOTYPE0_API ADamageIndicator : public AActor
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FText DamageText;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	EDamageIndicatorType DamageIndicatorType;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FVector IndicatorLocation;
@@ -32,8 +36,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(/*BlueprintImplementableEvent*/ Category = "Damage")
-	void InitializeDamageIndicator(const FText& Text);
+	UFUNCTION()
+	void InitializeDamageIndicator(const FText& Text, EDamageIndicatorType Type);
 
 	UFUNCTION()
 	void AnimFinished();
